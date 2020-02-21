@@ -5,7 +5,7 @@ import { ArrayExt } from '@lumino/algorithm';
 
 import { ReactWidget } from '@jupyterlab/apputils';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { VariablesModel } from './model';
 
@@ -123,6 +123,18 @@ const VariablesComponent = ({
 }) => {
   const [variables, setVariables] = useState(data);
   const [selected, setSelected] = useState(null);
+  const tbodyRef = useRef();
+
+  let pageX: number;
+  let curCol: {
+    nextElementSibling: any;
+    offsetWidth: number;
+    style: { width: string };
+  };
+  let nxtCol: { offsetWidth: number; style: { width: string } };
+  let curColWidth: number;
+  let nxtColWidth: number;
+  let cells: number;
 
   useEffect(() => {
     setVariables(data);
@@ -146,7 +158,7 @@ const VariablesComponent = ({
   };
 
   const Tbody = (variables: VariablesModel.IVariable[]) => (
-    <tbody>
+    <tbody ref={tbodyRef}>
       {variables?.map(variable => (
         <tr
           onDoubleClick={() => onVariableDoubleClicked(variable)}
@@ -163,12 +175,66 @@ const VariablesComponent = ({
     </tbody>
   );
 
+  const onmousedown = (e: React.MouseEvent, theme: number) => {
+    curCol = (e.target as any).parentElement;
+    nxtCol = curCol.nextElementSibling;
+    pageX = e.pageX;
+    cells = theme;
+    let padding = paddingDiff(curCol);
+
+    curColWidth = curCol.offsetWidth - padding;
+    if (nxtCol) {
+      nxtColWidth = nxtCol.offsetWidth - padding;
+    }
+  };
+
+  const onmoueup = (e: MouseEvent) => {
+    curCol = undefined;
+    nxtCol = undefined;
+    pageX = undefined;
+    nxtColWidth = undefined;
+    curColWidth = undefined;
+  };
+
+  const onmousemove = (e: MouseEvent) => {
+    if (!curCol) {
+      return;
+    }
+    const rows = Array.from((tbodyRef.current as any).rows);
+    let diffX = e.pageX - pageX;
+    if (nxtCol) {
+      nxtCol.style.width = nxtColWidth - diffX + 'px';
+    }
+
+    curCol.style.width = curColWidth + diffX + 'px';
+
+    console.log({ tbodyRef });
+    rows.map(
+      (row: any) => (row.cells[cells].style.width = curColWidth + diffX + 'px')
+    );
+  };
+
+  document.addEventListener('mousemove', e => onmousemove(e));
+  document.addEventListener('mouseup', e => onmoueup(e));
+
   return (
     <table>
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Type</th>
+          <th>
+            Name
+            <div
+              onMouseDown={e => onmousedown(e, 0)}
+              className="jp-DebuggerVariables-handlerTable"
+            ></div>
+          </th>
+          <th>
+            Type
+            <div
+              onMouseDown={e => onmousedown(e, 1)}
+              className="jp-DebuggerVariables-handlerTable"
+            ></div>
+          </th>
           <th>Value</th>
         </tr>
       </thead>
@@ -176,6 +242,68 @@ const VariablesComponent = ({
     </table>
   );
 };
+
+export const setListeners = function(div: HTMLElement) {
+  if (!div) {
+    return;
+  }
+  let pageX: number;
+  let curCol: {
+    nextElementSibling: any;
+    offsetWidth: number;
+    style: { width: string };
+  };
+  let nxtCol: { offsetWidth: number; style: { width: string } };
+  let curColWidth: number;
+  let nxtColWidth: number;
+
+  div.addEventListener('mousedown', function(e: any) {
+    curCol = e.target.parentElement;
+    nxtCol = curCol.nextElementSibling;
+    pageX = e.pageX;
+
+    let padding = paddingDiff(curCol);
+
+    curColWidth = curCol.offsetWidth - padding;
+    if (nxtCol) {
+      nxtColWidth = nxtCol.offsetWidth - padding;
+    }
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!curCol) {
+      return;
+    }
+    let diffX = e.pageX - pageX;
+    if (nxtCol) {
+      nxtCol.style.width = nxtColWidth - diffX + 'px';
+    }
+
+    curCol.style.width = curColWidth + diffX + 'px';
+  });
+
+  document.addEventListener('mouseup', function(e) {
+    curCol = undefined;
+    nxtCol = undefined;
+    pageX = undefined;
+    nxtColWidth = undefined;
+    curColWidth = undefined;
+  });
+};
+
+function paddingDiff(col: any) {
+  if (getStyleVal(col, 'box-sizing') === 'border-box') {
+    return 0;
+  }
+
+  let padLeft = getStyleVal(col, 'padding-left');
+  let padRight = getStyleVal(col, 'padding-right');
+  return parseInt(padLeft, 10) + parseInt(padRight, 10);
+}
+
+function getStyleVal(elm: any, css: any) {
+  return window.getComputedStyle(elm, null).getPropertyValue(css);
+}
 
 /**
  * A namespace for VariablesBodyTable `statics`.

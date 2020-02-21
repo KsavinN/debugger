@@ -82,8 +82,11 @@ export class Variables extends Panel {
    */
   private _resizeBody(msg: Widget.ResizeMessage) {
     const height = msg.height - this._header.node.offsetHeight;
-    this._table.node.style.height = `${height}px`;
-    this._tree.node.style.height = `${height}px`;
+    if (this._table.node?.children.length > 0) {
+      (this._table.node.children[0]
+        .children[1] as HTMLElement).style.height = `${height}px`;
+      this._tree.node.style.height = `${height}px`;
+    }
   }
 }
 

@@ -5,7 +5,6 @@
 
 .jp-DebuggerVariables-body {
   min-height: 24px;
-  overflow: auto;
 }
 
 .jp-DebuggerVariables-body ul {
@@ -44,6 +43,18 @@
 }
 
 .jp-DebuggerVariableDetails table tbody,
+.jp-DebuggerVariables-body table tbody {
+  overflow: auto;
+  display: block;
+}
+.jp-DebuggerVariables-body table thead,
+.jp-DebuggerVariables-body table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.jp-DebuggerVariableDetails table tbody,
 .jp-DebuggerVariableDetails table thead,
 .jp-DebuggerVariables-body table tbody,
 .jp-DebuggerVariables-body table thead {
@@ -61,6 +72,11 @@
 .jp-DebuggerVariables-body table tbody td,
 .jp-DebuggerVariables-body table thead th {
   padding: 5px;
+  position: relative;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 0;
   border-right: 1px solid var(--jp-layout-color3);
 }
 
@@ -77,25 +93,18 @@
   background: var(--jp-brand-color1);
 }
 
-.jp-detailsVariable-box {
-  position: fixed;
-  top: 30vh;
-  left: 20vw;
-  right: 0vw;
-  width: 500px;
-  z-index: 1253;
-  background-color: white;
-  text-align: center;
-  border: 1px solid #c1c1c1;
+.jp-DebuggerVariableDetails .jp-DebuggerVariables-handlerTable,
+.jp-DebuggerVariables-body .jp-DebuggerVariables-handlerTable {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  cursor: col-resize;
+  user-select: none;
+  width: 5px;
 }
 
-.jp-detailsVariable-box #header {
-  cursor: grab;
-  font-weight: bold;
-  background-color: #c1c1c1;
-}
-
-.jp-detailsVariable-box > button {
-  margin-bottom: 10px;
-  margin-top: 10px;
+.jp-DebuggerVariableDetails .jp-DebuggerVariables-handlerTable:hover,
+.jp-DebuggerVariables-body .jp-DebuggerVariables-handlerTable:hover {
+  border-right: 2px solid var(--jp-warn-color0);
 }
