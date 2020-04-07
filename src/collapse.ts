@@ -6,30 +6,30 @@ import { Panel, SplitPanel, Widget } from '@lumino/widgets';
 import { caretDownIcon, caretLeftIcon } from '@jupyterlab/ui-components';
 
 /**
- * The Carret Button for collapse in SplitPanel.
+ * The Caret Button for collapse in SplitPanel.
  */
-export class CarretWidget extends Widget {
+export class CaretWidget extends Widget {
   openedHeight: string;
   /**
-   * Instantiate a new CarretWidget.
+   * Instantiate a new CaretWidget.
    * @param indexWidget index of added widget in splitPanel
    */
   constructor() {
     super();
 
     const style = {
-      className: 'jp-CarretButton',
+      className: 'jp-CaretButton',
       height: 'auto',
       width: '20px'
     };
     this.node.style.minWidth = '25px';
 
-    this.carretLeft = caretLeftIcon.element(style);
-    this.carretDown = caretDownIcon.element(style);
+    this.caretLeft = caretLeftIcon.element(style);
+    this.caretDown = caretDownIcon.element(style);
     this._onClick = this._onClick.bind(this);
-    this.carretDown.onclick = this._onClick;
-    this.node.append(this.carretDown);
-    this.carretLeft.onclick = this._onClick;
+    this.caretDown.onclick = this._onClick;
+    this.node.append(this.caretDown);
+    this.caretLeft.onclick = this._onClick;
   }
 
   private _onClick() {
@@ -65,18 +65,18 @@ export class CarretWidget extends Widget {
       }
       widget.toggleClass(collapsedClass);
       setRelativeSizes();
-      this.node.removeChild(this.carretDown);
-      this.node.append(this.carretLeft);
+      this.node.removeChild(this.caretDown);
+      this.node.append(this.caretLeft);
     } else {
       widget.toggleClass(collapsedClass);
       setRelativeSizes();
-      this.node.removeChild(this.carretLeft);
-      this.node.append(this.carretDown);
+      this.node.removeChild(this.caretLeft);
+      this.node.append(this.caretDown);
     }
     this.isOpen = !this.isOpen;
   }
 
-  private carretLeft: HTMLElement;
-  private carretDown: HTMLElement;
+  private caretLeft: HTMLElement;
+  private caretDown: HTMLElement;
   private isOpen: boolean = true;
 }

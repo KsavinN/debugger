@@ -4,7 +4,7 @@
 import { Toolbar } from '@jupyterlab/apputils';
 
 import { PanelLayout, Widget } from '@lumino/widgets';
-import { CarretWidget } from '../collapse';
+import { CaretWidget } from '../collapse';
 
 /**
  * The header for a Variables Panel.
@@ -20,9 +20,9 @@ export class VariablesHeader extends Widget {
     title.node.textContent = 'Variables';
 
     const layout = new PanelLayout();
-    const carret = new CarretWidget();
+    const caret = new CaretWidget();
 
-    layout.addWidget(carret);
+    layout.addWidget(caret);
     layout.addWidget(title);
     layout.addWidget(this.toolbar);
     this.layout = layout;

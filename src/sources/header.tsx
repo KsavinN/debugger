@@ -5,7 +5,7 @@ import { ReactWidget, Toolbar, UseSignal } from '@jupyterlab/apputils';
 
 import { PanelLayout, Widget } from '@lumino/widgets';
 
-import { CarretWidget } from '../collapse';
+import { CaretWidget } from '../collapse';
 import { SourcesModel } from './model';
 
 import React from 'react';
@@ -31,9 +31,9 @@ export class SourcesHeader extends Widget {
       <SourcePathComponent model={model} />
     );
 
-    const carret = new CarretWidget();
+    const caret = new CaretWidget();
 
-    layout.addWidget(carret);
+    layout.addWidget(caret);
     layout.addWidget(title);
     layout.addWidget(this.toolbar);
     layout.addWidget(sourcePath);
